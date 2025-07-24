@@ -23,6 +23,9 @@ function Run() {
   const [notice, setNotice] = useState('System Is Free'); // System status
   const [menuOpen, setMenuOpen] = useState(false); // Mobile nav dropdown
 
+  const [saveInput, setSave] = useState(0)
+  const [inferenceInput, setInference] = useState(0)
+  
   // Logged-in user's username stored in localStorage
   const username = localStorage.getItem('currentUser');
 
@@ -118,10 +121,18 @@ function Run() {
     // Basic safety checks to avoid overload
     if (frequency > 6 || (!inf && durationInMinutes <= 0)) return;
 
+    //Get inference and saving inputs for ML model
+    const save = saveInput  
+    const inference = inferenceInput
+
     fetch("http://127.0.0.1:5000/start", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ duration: durationInMinutes, frequency })
+      body: JSON.stringify({
+        duration: durationInMinutes,
+        frequency: frequency,
+        save_img: save,
+        infer_img: inference})
     });
   };
 
@@ -234,7 +245,29 @@ function Run() {
 
         {/* Display estimated number of pictures */}
         <div className="picture-count-row">
-          <span id="pictureCount" style={{ color: '#43a047', fontWeight: 600 }}>Total Pictures: {pictureCount}</span>
+          <span id="pictureCount" style={{ color: '#43a047'}}>Total Pictures: {pictureCount}</span>
+        </div>
+
+        <div className='image-inputs'>
+
+          <div>
+            <input 
+              type="checkbox" 
+              id="save-imgs" 
+              value={saveInput} 
+              onChange={(e) => setSave(e.target.value)}
+              />
+            <label htmlFor="save-imgs" style={{ color: '#2e7031', fontWeight: 600, display: 'inline-flex', alignItems: 'center', marginRight: '1rem' }}>Save Images</label>
+          </div>
+
+          <div>
+            <input type="checkbox"
+              id="make-inference"
+              value={inferenceInput}
+              onChange={(e) => setInference(e.target.value)}
+              />
+            <label htmlFor="make-inference" style={{ color: '#2e7031' , fontWeight: 600, display: 'inline-flex', alignItems: 'center'}}>Make Inference</label>
+            </div>
         </div>
 
         {/* Action buttons */}
