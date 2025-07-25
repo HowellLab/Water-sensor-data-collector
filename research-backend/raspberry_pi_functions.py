@@ -7,10 +7,13 @@ from PIL import Image
 import time
 import threading
 from bson.objectid import ObjectId
-from ml_scripts import get_inference
+from ml_scripts import Inference_Queue
+import datetime
 
 app = Flask(__name__)
 CORS(app)
+
+inference_queue = Inference_Queue()
 
 def decode_image(encoded_img):
     
@@ -21,7 +24,7 @@ def decode_image(encoded_img):
     return img
 
 @app.route('/send_dur_and_freq', methods=['POST'])
-def sending_data(stoping, duration, frequency):
+def sending_data(stoping, duration, frequency, save, infer):
 
     url = 'http://10.4.119.62:5000/get_images'#Need to amke dynamic with difference cameras ips, miht need to write script to make the ip static in server.sh
     data = {'duration': duration, 'frequency': frequency}
@@ -39,7 +42,11 @@ def sending_data(stoping, duration, frequency):
 
                 response = requests.post(url, json=data, headers=headers)
                 image = decode_image(encoded_img=response.json()['image'])
-                image.save(f"images/image_{i}.png")
+                
+                if save:
+                    image.save(f"images/image_{i}.png")
+                if infer: 
+                    inference_queue.add_img(img=image, time=datetime.datetime, system="http://10.4.119.62:5000")#will change when ip adresses are dynamic
                 
                 #turn off LED
 
@@ -63,13 +70,12 @@ def sending_data(stoping, duration, frequency):
 
             response = requests.post(url, json=data, headers=headers)
             image = decode_image(encoded_img=response.json()['image'])
-            result = get_inference(image)
 
-            if result != "Clean":
-                return result
+            if save:
+                image.save(f"images/image_{i}.png")
+            if infer: 
+                inference_queue.add_img(img=image, time=datetime.datetime, system="http://10.4.119.62:5000")
                 
-                #turn off LED
-
             if i != number_of_images:
                 time.sleep(((1/frequency)*360)-.1)
 
@@ -88,11 +94,17 @@ def start():
     data = request.get_json()
     duration = data.get("duration")
     frequency = data.get("frequency")
+    save =  data.get("save_img")
+    infer = data.get("infer_img")
 
     global thread, stop_pictures
     if thread is None or not thread.is_alive():
         stop_pictures.clear()
-        thread = threading.Thread(target=sending_data, args=(stop_pictures, duration, frequency))
+        thread = threading.Thread(target=sending_data, args=(stop_pictures, duration, frequency, save, infer))
         thread.start()
         
     return "started"
+
+
+
+
