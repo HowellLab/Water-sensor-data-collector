@@ -2,6 +2,8 @@ from PIL import Image
 import torch
 from torchvision import transforms
 from torch import nn
+import queue
+import threading
 
 class ConvLayer(nn.Module):
     def __init__(self, inputChannels, outputChannels):
@@ -45,15 +47,7 @@ class Model(nn.Module):
         return self.output(X)
 
 
-def get_inference(img: Image): #Needs to be a PIL.Image Object
-
-    model=Model(in_channels=3, hidden_channels=10, hidden_layers=3, out_channels=2, height=480, width=640)
-
-    if torch.cuda.is_available():
-        model.load_state_dict(torch.load("ML/First Trial", map_location=torch.device('cuda')))
-
-    else:
-        model.load_state_dict(torch.load("ML/First Trial", map_location=torch.device('cpu')))
+def get_inference(img: Image, model): #Needs to be a PIL.Image Object
     
     tran = transforms.Compose([transforms.Resize((480, 640)), transforms.ToTensor()])
 
@@ -72,4 +66,48 @@ def get_inference(img: Image): #Needs to be a PIL.Image Object
         return "Empty"
 
 
+class Inference_Image:
+    def __init__(self, img, time, system):
+        self.img=img
+        self.time=time
+        self.user=None #This will be changes when we get the local session up and going
+        self.system=system 
+
+class Inference_Queue:
+
+
+    def __init__(self):
+        self.queue= queue.Queue()
+        self.model=self.instanciate_model()
+        self.stop_event = threading.Event()
+        self.working_thread = threading.Thread(target=self.process, daemon=True)
+        
+        self.working_thread.start()
+
+    def instanciate_model(self):
+        model=Model(in_channels=3, hidden_channels=10, hidden_layers=3, out_channels=2, height=480, width=640)
+        
+        if torch.cuda.is_available():
+            model.load_state_dict(torch.load("ML/First Trial", map_location=torch.device('cuda')))
+        else:
+            model.load_state_dict(torch.load("ML/First Trial", map_location=torch.device('cpu')))
+        return model
+    
+    def add_img(self, img:Image, time, system: str): #add type cast
+        img_object=Inference_Image(img=img, time=time, system=system, )
+        self.queue.put(img_object)
+
+    def stop(self):
+        self.stop_event.set()
+        self.working_thread.join()
+
+    def process(self):
+        while not self.stop_event.is_set():
+            img_obj = self.queue.get()
+            prediction = get_inference(model=self.model, img=img_obj.img)
+            if prediction == "Dirty":
+                print("Prediction is Dirty\nAdd Logic Here and whatever you want to do\nI suggest using all of the stuff in the img object in order to send out propper notifications")
+            elif prediction == "Empty":
+                print("Prediction is Empty\nAdd Logic Here and whatever you want to do\nI suggest using all of the stuff in the img object in order to send out propper notifications")
+            self.queue.task_done()
     
