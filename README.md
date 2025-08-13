@@ -1,6 +1,6 @@
 # University of Maine Symposium Poster – 2026
 [Juhayer Islam Symposium 2026.pdf](https://github.com/user-attachments/files/21745233/Juhayer.Islam.Symposium.2026.pdf)
-<img width="701" alt="Screenshot 2025-04-19 at 1 04 36 PM" src="[https://github.com/user-attachments/assets/c8bdd97a-908d-4647-b8ac-c946d9131198](https://github.com/user-attachments/files/21745233/Juhayer.Islam.Symposium.2026.pdf)" />
+<img width="701" src="[https://github.com/user-attachments/assets/c8bdd97a-908d-4647-b8ac-c946d9131198(https://github.com/userattachments/files/21745233/Juhayer.Islam.Symposium.2026.pdf)" />
 # Research Project: Setup & Usage Guide
 
 Welcome! This guide will walk you through setting up and running the research project. Please follow each step carefully. If you get stuck, ask for help.
