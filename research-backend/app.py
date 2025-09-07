@@ -11,7 +11,10 @@ import os
 import random
 import string
 from datetime import datetime, timedelta
-
+import base64
+import io
+import zipfile
+from ml_scripts import get_inference
 # ML Inference Import
 from ml_scripts import get_inference
 
@@ -360,6 +363,50 @@ def update_system_status():
     except Exception as e:
         print(f"Error in update_system_status: {e}")
         return jsonify({'success': False, 'message': 'An error occurred'}), 500
+
+@app.route("/manual_inference")
+def manally_infer():
+    print("in")
+    imgs = request.files["images"]
+    file_buffer = io.BytesIO(imgs.read())
+    content_type = imgs.content_type
+
+    zip_mem = io.BytesIO()
+    zipf = zipfile.ZipFile(zip_mem, "w")
+
+    if "zip" in content_type:
+
+        content_bytes = io.BytesIO(file_buffer.read())
+        content = zipfile.ZipFile(content_bytes, 'r')
+        
+        for img_name in (content.namelist()):
+            #TODO: refactor to add to queue 
+            #TODO: Have there be a "bypass" falg to skip to the front of the queue
+            mask = get_inference(Image.open(io.BytesIO(content.read(img_name))))  # noqa: F405
+            
+            mask_b = io.BytesIO()
+            mask.save(mask_b, format="PNG")
+            mask_b.seek(0)
+        
+            zipf.writestr(img_name, mask_b.read())
+            
+    else:
+        #TODO: refactor to add to queue 
+        #TODO: Have there be a "bypass" falg to skip to the front of the queue
+        mask=get_inference(img=Image.open(file_buffer))  # noqa: F405
+        mask_b = io.BytesIO()
+        mask.save(mask_b, format="PNG")
+        mask_b.seek(0)
+        
+        zipf.writestr(f"{file_buffer}.PNG", mask_b.read())  
+    
+    zipf.close()
+    zip_mem.seek(0)
+    zip_data = zip_mem.read()
+    zip_64 = base64.b64encode(zip_data).decode('utf-8')
+
+    return jsonify({"results": zip_64})
+
 
 
 if __name__ == '__main__':

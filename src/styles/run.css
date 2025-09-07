@@ -16,6 +16,12 @@
   color: #007acc;
 }
 
+.container h4 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #007acc;
+}
+
 /* Labels for inputs */
 .container label {
   display: block;
@@ -67,6 +73,36 @@
   gap: 10px;
   align-items: center;
   margin-bottom: 10px;
+}
+
+.input-row input[type="file"]::file-selector-button {
+  background: linear-gradient(135deg, #43a047, #2e7031);
+  color: #fff;
+  border: none;
+  margin: 'none';
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+.input-row input[type="file"]::file-selector-button:hover {
+  background: linear-gradient(135deg, #2e7031, #1b5e20);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 16px rgba(67, 160, 71, 0.18);
+}
+
+.input-row input[type="file"]::file-selector-button:active {
+  transform: scale(0.98);
+}
+
+.input-row label {
+  display: inline-block;   
+  margin: 0;               
+  font-weight: 500;
+  color: #007acc;          
+  min-width: 140px;        
 }
 
 /* Group input and label together */
@@ -248,6 +284,10 @@ select#system {
   color: #4cd360;
 }
 
+.manual-inference-button{
+  background: linear-gradient(135deg, #43a047, #2e7031);
+  transform: scale(0.98);
+}
 /* Mobile responsiveness */
 @media (max-width: 600px) {
   .input-with-select {

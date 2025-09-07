@@ -149,6 +149,41 @@ function Run() {
     window.location.href = '/login';
   };
 
+  async function SubmitImages() {
+    const fileInput = document.getElementById("file");
+    const file = fileInput.files[0];
+    
+    const formData = new FormData();
+    formData.append("images", file);
+
+    const spinner = document.getElementById("spinner");
+    // spinner.classList.remove("hidden");
+
+    try {
+        const response = await fetch("/manual_inference", {
+            method: "POST",
+            body: formData
+        });
+
+        const blob = await response.blob();
+        console.log(blob)
+        console.log(response)
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+
+        a.href = url;
+        a.download = "Water Sensor Results.zip";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+        //spinner.classList.add("hidden");
+        
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
   return (
     <div>
       {/* Navigation bar */}
@@ -258,7 +293,7 @@ function Run() {
               value={saveInput} 
               onChange={(e) => setSave(e.target.value)}
               />
-            <label htmlFor="save-imgs" style={{ color: '#2e7031', fontWeight: 600, display: 'inline-flex', alignItems: 'center', marginRight: '1rem' }}>Save Images</label>
+            <label style={{ color: '#2e7031', fontWeight: 600, display: 'inline-flex', alignItems: 'center', marginRight: '1rem' }}>Save Images</label>
           </div>
 
           <div>
@@ -281,7 +316,27 @@ function Run() {
         {/* System status */}
         <p id="notice" style={{ color: '#43a047', fontWeight: 600 }}>{notice}</p>
       </div>
+      
+      <div className='container'>
+          <h2 style={{ color: '#43a047' }}>Infer Images Manually</h2>
+          <h4 htmlFor="system" style={{ color: '#2e7031' }}>Drop in Either a Singular File or Zip File Containing Images</h4>
+          
+          
+          <div className='button-row'>
+            <input type="file" id="file" style={{ display: "none" }} />
+            <button
+              type="button"
+              className=""
+              onClick={() => document.getElementById("file").click()}
+            >
+              Choose File
+            </button>
+            <button onClick={() => SubmitImages()}>Submit</button>
+          </div>
 
+
+
+      </div>
       {/* Popup to add a new system */}
       {popupVisible && (
         <div className="popup">
