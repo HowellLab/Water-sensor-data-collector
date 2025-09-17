@@ -1,7 +1,4 @@
-# University of Maine Symposium Poster – 2026
-[Juhayer Islam Symposium 2026.pdf](https://github.com/user-attachments/files/21745233/Juhayer.Islam.Symposium.2026.pdf)
-
-# Research Project: Setup & Usage Guide
+# Wter Sensor: Setup & Usage Guide
 
 Welcome! This guide will walk you through setting up and running the research project. Please follow each step carefully. If you get stuck, ask for help.
 
@@ -19,16 +16,24 @@ Welcome! This guide will walk you through setting up and running the research pr
 ---
 
 ## Requirements
-- **macOS** (or Linux/Windows with minor adjustments)
 - **Python 3.10+**
 - **Node.js 18+** and **npm**
-- **Git** (optional, for version control)
+- **Git** 
+
+Instruction for instalation can be found on the following website
+- [Python](https://www.python.org/downloads/)
+- [Node.js](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+- [Git](https://git-scm.com/book/ms/v2/Getting-Started-Installing-Git)
+- [MongoDB](https://www.mongodb.com/try/download/community-kubernetes-operator)
+
+-If something is not working, closing the terminal window and opening it back up will sometimes fix it
+-Also, the following commands are set for Windows macines, Linux and macOS machines will follow the same commands, however, they may be slightly different. ChatGPT would be a good reasource for command conversions.
 
 ---
 
 ## Project Structure
-- `research-backend/` — Python backend (API server)
-- `src/` — React frontend (user interface)
+- `research-backend/` — Python backend
+- `src/` — React frontend
 - `public/` — Static files for frontend
 - `requirements.txt` — Python dependencies
 - `package.json` — Node.js dependencies
@@ -38,49 +43,54 @@ Welcome! This guide will walk you through setting up and running the research pr
 ## Initial Setup
 
 ### 1. Open Terminal
-- Press `Cmd + Space`, type `Terminal`, and press `Enter`.
+-Open up your terminal either inside your IDE (VSCode, Vim, IntelliJ, etc) or outside of it
 
 ### 2. Navigate to the Project Folder
-Replace `/path/to/research-main` with the actual path if different.
-```sh
-cd ~/Downloads/research-main
-```
+-Using the `cd` command, navigate to where you would like the project to live
+-Example: `cd HowellLab/Desktop/Github Repos`
 
-### 3. Install Python Dependencies
-```sh
+### 3. Getting The Project on Your Machine
+-Run th command `git clone https://github.com/HowellLab/Water-Sensor.git` inside your terminal
+-This will put all of the code onto your machine 
+
+### 4. Install Python Dependencies
+-Run these commands individually inside your newly cloned repository
+```
 cd research-backend
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+python -m venv .venv
+.\.venv\Scripts\activate
+python -m pip install -r requirements.txt
 ```
+-This will put all of the dependincies inside your virtual enviroment so that the program can run smoothly
+-If you are using an IDE such as VSCode, you will see a .venv folder appead on the left side of your screen
 
-### 4. Install Node.js Dependencies
-Open a **new terminal tab** (press `Cmd + T`), then:
-```sh
-cd ~/Downloads/research-main
+### 5. Install Node.js Dependencies
+-Now run each of these commands individually
+```
+cd ..
 npm install
 ```
-
+This will install of the Node.js dependincies needed to run the program
 ---
 
-## Running the Backend (Python)
-1. In the terminal (with the virtual environment activated):
-```sh
+## Getting the program Running
+1. Now that you are inside your virtual enviorment (a little (.venv) should appear in your terminal), run the following commands
+-You will need to make sure that you are inside the virtual enviorment each time you want to run the program. Do this by running `.\.venv\Scripts\activate`
+```
 cd research-backend
-source venv/bin/activate
 python app.py
 ```
 - The backend server should start, usually on `http://127.0.0.1:5000` or similar.
 
 ---
 
-## Running the Frontend (React)
-1. In a **new terminal tab**:
-```sh
-cd ~/Downloads/research-main
+2. Now open up a new terminal and type the following commands one at a time
+```
+cd ..
+cd src
 npm start
 ```
-- This will start the React app, usually on `http://localhost:3000`.
+- This will start the React app, usually on `http://localhost:3000`. This should also automatically open up and window on your machine, but it might not
 
 ---
 
@@ -107,69 +117,6 @@ npm start
 ---
 
 ## Additional Notes
-- Always keep the backend and frontend running in separate terminal tabs.
-- To stop a running server, press `Ctrl + C` in the terminal.
+- Always keep the two terminals running for the durration of time you want to use the program.
+- To stop a running server, press `Ctrl + C` in both pf the terminal.
 - If you make code changes, restart the affected server (backend or frontend).
-
-
-
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

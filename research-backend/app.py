@@ -1,5 +1,5 @@
 #app.py
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -16,7 +16,8 @@ import io
 import zipfile
 from ml_scripts import get_inference
 # ML Inference Import
-from ml_scripts import get_inference
+from ml_scripts import get_inference, Model
+import pandas as pd
 
 # Load environment variables
 load_dotenv()
@@ -364,48 +365,51 @@ def update_system_status():
         print(f"Error in update_system_status: {e}")
         return jsonify({'success': False, 'message': 'An error occurred'}), 500
 
-@app.route("/manual_inference")
+@app.route("/manual_inference", methods=["POST"])
 def manally_infer():
-    print("in")
     imgs = request.files["images"]
-    file_buffer = io.BytesIO(imgs.read())
     content_type = imgs.content_type
-
-    zip_mem = io.BytesIO()
-    zipf = zipfile.ZipFile(zip_mem, "w")
-
+    model = Model(in_channels=3, hidden_channels=10, hidden_layers=3, out_channels=2, height=480, width=640)
+    results = []
     if "zip" in content_type:
-
-        content_bytes = io.BytesIO(file_buffer.read())
+        print("zipped")
+        content_bytes = io.BytesIO(imgs.read())
         content = zipfile.ZipFile(content_bytes, 'r')
         
         for img_name in (content.namelist()):
+            print("fr")
             #TODO: refactor to add to queue 
             #TODO: Have there be a "bypass" falg to skip to the front of the queue
-            mask = get_inference(Image.open(io.BytesIO(content.read(img_name))))  # noqa: F405
-            
-            mask_b = io.BytesIO()
-            mask.save(mask_b, format="PNG")
-            mask_b.seek(0)
+            inference = get_inference(model=model, img=Image.open(io.BytesIO(content.read(img_name))))  # noqa: F405
+            results.append({"Image Name": img_name, "Prediction": inference})
         
-            zipf.writestr(img_name, mask_b.read())
-            
+        
+        df = pd.DataFrame(results, columns=["Image Name", "Prediction"])
+        output = io.BytesIO()
+
+        with pd.ExcelWriter(output, engine="openpyxl") as writer:
+            df.to_excel(writer, index=False, sheet_name="Water Sensor Results")
+        output.seek(0)
+
+        return send_file(output, as_attachment=True, download_name="Water Sensor Results.xslx")
+
+
+
+
     else:
         #TODO: refactor to add to queue 
         #TODO: Have there be a "bypass" falg to skip to the front of the queue
-        mask=get_inference(img=Image.open(file_buffer))  # noqa: F405
-        mask_b = io.BytesIO()
-        mask.save(mask_b, format="PNG")
-        mask_b.seek(0)
+        inference = str(get_inference(model=model, img=Image.open(io.BytesIO(imgs.read()))))  # noqa: F405
+        results.append({"Image Name": imgs.filename, "Prediction": inference})
         
-        zipf.writestr(f"{file_buffer}.PNG", mask_b.read())  
-    
-    zipf.close()
-    zip_mem.seek(0)
-    zip_data = zip_mem.read()
-    zip_64 = base64.b64encode(zip_data).decode('utf-8')
+        df = pd.DataFrame(results, columns=["Image Name", "Prediction"])
+        output = io.BytesIO()
 
-    return jsonify({"results": zip_64})
+        with pd.ExcelWriter(output, engine="openpyxl") as writer:
+            df.to_excel(writer, index=False, sheet_name="Water Sensor Results")
+        output.seek(0)
+
+        return send_file(output, as_attachment=True, download_name="Water Sensor Results.xslx")
 
 
 

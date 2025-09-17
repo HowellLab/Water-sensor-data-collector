@@ -27,6 +27,7 @@ function Run() {
   const [saveInput, setSave] = useState(0)
   const [inferenceInput, setInference] = useState(0)
   
+  const [message, changeResults] = useState("No File Chosen")
   // Logged-in user's username stored in localStorage
   const username = localStorage.getItem('currentUser');
 
@@ -152,15 +153,17 @@ function Run() {
   async function SubmitImages() {
     const fileInput = document.getElementById("file");
     const file = fileInput.files[0];
-    
+
     const formData = new FormData();
     formData.append("images", file);
 
     const spinner = document.getElementById("spinner");
-    // spinner.classList.remove("hidden");
+    changeResults('')
+
+    spinner.classList.remove("hidden");
 
     try {
-        const response = await fetch("/manual_inference", {
+        const response = await fetch("http://localhost:5000/manual_inference", {
             method: "POST",
             body: formData
         });
@@ -168,18 +171,19 @@ function Run() {
         const blob = await response.blob();
         console.log(blob)
         console.log(response)
+        console.log(response.results)
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
 
         a.href = url;
-        a.download = "Water Sensor Results.zip";
+        a.download = "Water Sensor Results.xlsx";
         document.body.appendChild(a);
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
 
-        //spinner.classList.add("hidden");
-        
+        spinner.classList.add("hidden");
+        changeResults('No File Chosen')
     } catch (error) {
         console.error("Error:", error);
     }
@@ -317,17 +321,24 @@ function Run() {
         <p id="notice" style={{ color: '#43a047', fontWeight: 600 }}>{notice}</p>
       </div>
       
-      <div className='container'>
+      {/*Manual Inference*/}
+      <div className='container manual-inference'>
           <h2 style={{ color: '#43a047' }}>Infer Images Manually</h2>
           <h4 htmlFor="system" style={{ color: '#2e7031' }}>Drop in Either a Singular File or Zip File Containing Images</h4>
           
+          <div id='spinner' class='spinner hidden'/>
+          <p className='p_results'>{message}</p>
+
           
           <div className='button-row'>
             <input type="file" id="file" style={{ display: "none" }} />
             <button
               type="button"
               className=""
-              onClick={() => document.getElementById("file").click()}
+              onClick={() => {
+                document.getElementById("file").click()
+                changeResults("File Chossen")
+               }}
             >
               Choose File
             </button>

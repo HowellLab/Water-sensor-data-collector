@@ -309,3 +309,43 @@ select#system {
     margin-top: 8px;
   }
 }
+.manual-inference h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #43a047; /* Deep green */
+}
+
+.manual-inference h4 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2e7031; /* Darker green */
+}
+
+/* Result message style */
+.manual-inference .p_results {
+  text-align: center;
+  font-weight: 500;
+  color: #2e7031;
+  margin-top: 12px;
+  margin-bottom: 18px;
+}
+
+/* Spinner styles */
+.spinner {
+  margin: 10px auto;
+  border: 4px solid #c8e6c9;
+  border-top: 4px solid #2e7031;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+}
+
+.spinner.hidden {
+  display: none;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
