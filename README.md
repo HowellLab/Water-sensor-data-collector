@@ -25,6 +25,8 @@ Instruction for instalation can be found on the following website
 - [Node.js](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 - [Git](https://git-scm.com/book/ms/v2/Getting-Started-Installing-Git)
 - [MongoDB](https://www.mongodb.com/try/download/community-kubernetes-operator)
+- [MongoDB Tools](https://www.mongodb.com/try/download/database-tools)
+  - Make sure that you add this to your PATH so you can call this library
 
 -If something is not working, closing the terminal window and opening it back up will sometimes fix it
 -Also, the following commands are set for Windows macines, Linux and macOS machines will follow the same commands, however, they may be slightly different. ChatGPT would be a good reasource for command conversions.
@@ -73,6 +75,10 @@ npm install
 This will install of the Node.js dependincies needed to run the program
 ---
 
+### 6. Getting Database Setup
+-Run the command `mongostore --db Rainbows_DB ./db-dump/myappdb`
+This will set up the database so that everything runs. 
+
 ## Getting the program Running
 1. Now that you are inside your virtual enviorment (a little (.venv) should appear in your terminal), run the following commands
 -You will need to make sure that you are inside the virtual enviorment each time you want to run the program. Do this by running `.\.venv\Scripts\activate`
@@ -98,7 +104,9 @@ npm start
 - Open your web browser (Safari, Chrome, etc.).
 - Go to: [http://localhost:3000](http://localhost:3000)
 - You should see the application homepage.
-
+- A base username name and password that comes pre instaled is 
+-- Username: test2
+-- Password: pass
 ---
 
 ## Troubleshooting

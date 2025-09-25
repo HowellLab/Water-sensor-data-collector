@@ -153,39 +153,44 @@ function Run() {
   async function SubmitImages() {
     const fileInput = document.getElementById("file");
     const file = fileInput.files[0];
+    if (file == null){
+      alert("Please Choose a File")
+      changeResults("File Not Chosen")
+    }
+    else{
+      const formData = new FormData();
+      formData.append("images", file);
 
-    const formData = new FormData();
-    formData.append("images", file);
+      const spinner = document.getElementById("spinner");
+      changeResults('')
 
-    const spinner = document.getElementById("spinner");
-    changeResults('')
+      spinner.classList.remove("hidden");
 
-    spinner.classList.remove("hidden");
+      try {
+          const response = await fetch("http://localhost:5000/manual_inference", {
+              method: "POST",
+              body: formData
+          });
 
-    try {
-        const response = await fetch("http://localhost:5000/manual_inference", {
-            method: "POST",
-            body: formData
-        });
+          const blob = await response.blob();
+          console.log(blob)
+          console.log(response)
+          console.log(response.results)
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
 
-        const blob = await response.blob();
-        console.log(blob)
-        console.log(response)
-        console.log(response.results)
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
+          a.href = url;
+          a.download = "Water Sensor Results.xlsx";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
 
-        a.href = url;
-        a.download = "Water Sensor Results.xlsx";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-
-        spinner.classList.add("hidden");
-        changeResults('No File Chosen')
-    } catch (error) {
-        console.error("Error:", error);
+          spinner.classList.add("hidden");
+          changeResults('No File Chosen')
+      } catch (error) {
+          console.error("Error:", error);
+      }
     }
 }
   return (
@@ -327,7 +332,8 @@ function Run() {
           <h4 htmlFor="system" style={{ color: '#2e7031' }}>Drop in Either a Singular File or Zip File Containing Images</h4>
           
           <div id='spinner' class='spinner hidden'/>
-          <p className='p_results'>{message}</p>
+          <p className='p_results'>{message}</p> 
+          {/*Make this message more truthful of when a file is selected*/}
 
           
           <div className='button-row'>
