@@ -56,8 +56,9 @@ def get_inference(img: Image, model): #Needs to be a PIL.Image Object
     preds = model(img)
 
     preds = torch.nn.functional.softmax(preds, dim = 1)#logits to preds
+    print(preds)
     labels = torch.argmax(preds, dim=1).item()
-
+    print
     if labels == 0:
         return "Clean"
     elif labels==1:

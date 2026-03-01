@@ -18,6 +18,7 @@ from ml_scripts import get_inference
 # ML Inference Import
 from ml_scripts import get_inference, Model
 import pandas as pd
+import torch
 
 # Load environment variables
 load_dotenv()
@@ -369,7 +370,11 @@ def update_system_status():
 def manally_infer():
     imgs = request.files["images"]
     content_type = imgs.content_type
-    model = Model(in_channels=3, hidden_channels=10, hidden_layers=3, out_channels=2, height=480, width=640)
+    model = Model(in_channels=3, hidden_channels=10, hidden_layers=6, out_channels=3, height=480, width=640)
+    if torch.cuda.is_available():
+        model.load_state_dict(torch.load("ML/Retrained Model 2", map_location=torch.device('cuda')))
+    else:
+        model.load_state_dict(torch.load("ML/Retrained Model 2", map_location=torch.device('cpu')))
     results = []
     if "zip" in content_type:
         print("zipped")
@@ -377,7 +382,7 @@ def manally_infer():
         content = zipfile.ZipFile(content_bytes, 'r')
         
         for img_name in (content.namelist()):
-            print("fr")
+            print(img_name)
             #TODO: refactor to add to queue 
             #TODO: Have there be a "bypass" falg to skip to the front of the queue
             inference = get_inference(model=model, img=Image.open(io.BytesIO(content.read(img_name))))  # noqa: F405
