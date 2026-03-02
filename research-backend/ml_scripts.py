@@ -56,7 +56,7 @@ class Model(nn.Module):
 
 def get_inference(img: Image, model): #Needs to be a PIL.Image Object
     
-    tran = transforms.Compose([transforms.Resize((480, 640)), transforms.ToTensor()])
+    tran = transforms.Compose([transforms.Resize((640, 480)), transforms.ToTensor()])
 
     img = tran(img)
     img = torch.unsqueeze(img, dim=0)
