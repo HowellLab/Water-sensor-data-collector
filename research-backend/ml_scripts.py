@@ -10,8 +10,10 @@ class ConvLayer(nn.Module):
         super().__init__()
         self.ConvLayer = nn.Sequential(
             nn.Conv2d(in_channels=inputChannels, out_channels=outputChannels, kernel_size=3, padding=1, stride=1),
+            nn.BatchNorm2d(outputChannels),
+            
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, padding=1, stride=1)
+            nn.MaxPool2d(kernel_size=2, padding=0, stride=2)
         )
 
     def forward(self, x: torch.Tensor):
@@ -24,12 +26,17 @@ class Model(nn.Module):
     
     def __init__(self, in_channels: int, hidden_channels: int, hidden_layers:int, out_channels: int, height: int, width: int):
         super().__init__()
+        
+        reduction_factor = 2 ** hidden_layers
+        final_height = height // reduction_factor
+        final_width = width // reduction_factor
+        flattened_value = hidden_channels * final_height * final_width
 
         self.input = nn.Conv2d(in_channels=in_channels, out_channels=hidden_channels, kernel_size=3, padding=1, stride=1)
         self.conv_layers = nn.ModuleList()
         self.output = nn.Sequential(
             nn.Flatten(),
-            nn.LazyLinear(out_features=out_channels),
+            nn.Linear(in_features=int(flattened_value), out_features=out_channels),
             nn.Sigmoid()
         )
 
